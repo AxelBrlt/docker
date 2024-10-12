@@ -1,0 +1,47 @@
+versien: '3'
+
+services:
+  adguardhome:
+    image: adguard/adguardhome
+    centainer_name: adguardhome
+    restart: unless-stopped
+    ports:
+      # Port 53 en TCP et UDP pour les requêtes DNS:
+      - "53:53/tcp"
+      - "53:53/udp"
+
+      # Port 67 en UDP pour le serveur DHCP:
+      - "67:67/udp"
+
+      # Port 68 en UDP pour le client DHCP:
+      # - "68:68/udp"
+
+      # Port 80 en TCP pour l'interface web HTTP:
+      - "80:80/tcp"
+
+      # Port 443 en TCP pour l'interface web HTTPS:
+      - "443:443/tcp"
+      - "443:443/udp"
+
+      # Port 3000 en TCP pour l'API d'AdGuard Home:
+      - "3000:3000/tcp"
+
+      # Port 853 en TCP pour le DNS-over-TLS (DoT)
+      - "853:853/tcp"
+
+      # Port 784 en UDP pour le DNS-over-QUIC (DoQ)
+      - "784:784/udp"
+
+      # Port 853 en UDP pour le DNS-over-DTLS (DoT)
+      - "853:853/udp"
+
+      # Port 8853 en UDP pour le DNS-over-TLS (DoT)
+      - "8853:8853/udp"
+
+      # Port 5443 en TCP and UDP pour le DNSCrypt
+      - "5443:5443/tcp"
+      - "5443:5443/udp"
+
+    volumes: 
+      - ./adguard-home/work:/opt/adguardhome/work 
+      - ./adguard-home/cenfdir:/opt/adguardhome/cenf 

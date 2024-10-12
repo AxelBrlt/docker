@@ -1,0 +1,47 @@
+# Pour créer le superutilisateur;
+# Connectez-vous en CLI au conteneur "webserver";
+# Exécutez la commande "python3 manane.py createsuperuser" pour créer l'utilisateur;
+# Fermez la console.
+
+services:
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  db:
+    image: docker.io/library/postgres:16
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+    ports:
+      - "8010:8000"
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+# L'UID et le GID doivent être les mêmes que ceux de l'utilisateur sur lequel est installer le conteneur.
+# Par défaut, si la machine n'a qu'un seul utilisateur, ces valeurs seront celles renseignées dans ce fichier.
+      USERMAP_UID: 1000
+      USERMAP_GID: 100
+volumes:
+  data:
+  media:
+  pgdata:
+  redisdata:
