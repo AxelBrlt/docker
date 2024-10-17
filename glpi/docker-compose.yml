@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.2"
 
 services:
 #MariaDB Container
@@ -6,11 +6,11 @@ services:
     image: mariadb:10.7
     container_name: mariadb
     hostname: mariadb
-    environment:
-      - MARIADB_ROOT_PASSWORD=password
-      - MARIADB_DATABASE=glpidb
-      - MARIADB_USER=glpi_user
-      - MARIADB_PASSWORD=glpi
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+    env_file:
+      - ./mariadb.env
+    restart: always
 
 #GLPI Container
   glpi:
@@ -19,3 +19,10 @@ services:
     hostname: glpi
     ports:
       - "80:80"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/www/html/glpi/:/var/www/html/glpi
+    environment:
+      - TIMEZONE=Europe/Paris
+    restart: always
